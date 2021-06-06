@@ -2,8 +2,10 @@ package com.soli.xpath;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.InputStream;
+import java.math.BigDecimal;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -97,6 +99,32 @@ class XPathTest {
 
 			Integer year = Integer.parseInt(map.getNamedItem("year").getNodeValue());
 			assertTrue(year < 2001);
+		}
+	}
+
+	@Test
+	void listBooksCheaperThan8DollarsTest() throws XPathExpressionException {
+		expression = xpath.compile("//book[price<8]");
+		NodeList nodes = (NodeList) expression.evaluate(xmlDocument, XPathConstants.NODESET);
+
+		BigDecimal valueToTest = new BigDecimal(8);
+
+		for (int i = 0; i < nodes.getLength(); i++) {
+			final Node node = nodes.item(i);
+
+			switch (node.getNodeType()) {
+			case Node.ELEMENT_NODE:
+				System.out.println(node.getTextContent());
+
+				int pricePosition = node.getChildNodes().getLength() - 2;
+				BigDecimal price = new BigDecimal(node.getChildNodes().item(pricePosition).getTextContent());
+				assertEquals(price.compareTo(valueToTest), -1);
+
+				break;
+			default:
+				break;
+			}
+
 		}
 	}
 }
