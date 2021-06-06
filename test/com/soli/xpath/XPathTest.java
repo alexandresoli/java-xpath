@@ -62,22 +62,41 @@ class XPathTest {
 		NodeList nodes = (NodeList) expression.evaluate(xmlDocument, XPathConstants.NODESET);
 
 		for (int i = 0; i < nodes.getLength(); i++) {
-			System.out.println(nodes.item(i).getNodeValue());
+			System.out.println("Book title: " + nodes.item(i).getNodeValue());
 			assertNotNull(nodes.item(i).getNodeValue());
 		}
 	}
 
 	@Test
-	void listBooksWrittenAfter2021Test() throws XPathExpressionException {
+	void listBooksWrittenAfter2001Test() throws XPathExpressionException {
 
 		expression = xpath.compile("//book[@year>2001]");
 		NodeList nodes = (NodeList) expression.evaluate(xmlDocument, XPathConstants.NODESET);
 
 		for (int i = 0; i < nodes.getLength(); i++) {
 			Node node = nodes.item(i);
+			System.out.println("Book title: " + node.getChildNodes().item(1).getTextContent());
+
 			NamedNodeMap map = node.getAttributes();
+
 			Integer year = Integer.parseInt(map.getNamedItem("year").getNodeValue());
 			assertTrue(year > 2001);
+		}
+	}
+
+	@Test
+	void listBooksWrittenBefore2001Test() throws XPathExpressionException {
+		expression = xpath.compile("//book[@year<2001]");
+		NodeList nodes = (NodeList) expression.evaluate(xmlDocument, XPathConstants.NODESET);
+
+		for (int i = 0; i < nodes.getLength(); i++) {
+			Node node = nodes.item(i);
+			System.out.println("Book title: " + node.getChildNodes().item(1).getTextContent());
+
+			NamedNodeMap map = node.getAttributes();
+
+			Integer year = Integer.parseInt(map.getNamedItem("year").getNodeValue());
+			assertTrue(year < 2001);
 		}
 	}
 }
